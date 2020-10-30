@@ -3,11 +3,17 @@ $counterSetNames = (Get-Counter -ListSet *).CounterSetName
 foreach($counterSetName in $counterSetNames)
 {
     $counters = (Get-Counter -ListSet $counterSetName).Counter
-    New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force
+    
+    $counterName = $counterSetName.ToString()
+    $counterName = $counterName.Replace("*","").Replace("=","").Replace(">","").Replace(" ","")
+    $counterSetName = $counterName
+
+    New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force -Verbose
     foreach($counter in $counters)
     {
         $counterName = $counter.Substring(1)
         $counterName = $counterName.Replace("*","").Replace("/","-").Replace("\","").Replace("(","").Replace(")","")
+        $counterName = $counterName.Replace(">","").Replace("=","")
         $counterFileName = ".\Counters\" + $counterSetName + "\" + $counterName + ".ps1"
         #Write-Host $counterName
         $contents = 'Get-Counter -Counter ' + '"' + $counter + '"' + ' -Continuous'
@@ -17,3 +23,6 @@ foreach($counterSetName in $counterSetNames)
         Set-Content -Path $counterFileName $contents
     }
 }
+
+Write-Host -NoNewLine 'Press any key to continue...';
+$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
