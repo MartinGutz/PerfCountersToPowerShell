@@ -1,12 +1,17 @@
+function SanitizeNames($fileName)
+{
+    $name = $fileName.ToString()
+    $cleanName = $name.Replace("*","").Replace("=","").Replace(">","").Replace(" ","")
+    return $cleanName
+}
+
+
 $counterSetNames = (Get-Counter -ListSet *).CounterSetName
 
 foreach($counterSetName in $counterSetNames)
 {
     $counters = (Get-Counter -ListSet $counterSetName).Counter
-    
-    $counterName = $counterSetName.ToString()
-    $counterName = $counterName.Replace("*","").Replace("=","").Replace(">","").Replace(" ","")
-    $counterSetName = $counterName
+    $counterSetName = SanitizeNames $counterSetName
 
     New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force -Verbose
     foreach($counter in $counters)
