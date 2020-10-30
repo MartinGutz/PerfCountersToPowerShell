@@ -1,10 +1,13 @@
 function SanitizeNames($fileName)
 {
     $name = $fileName.ToString()
-    $cleanName = $name.Replace("*","").Replace("=","").Replace(">","").Replace(" ","")
-    return $cleanName
+    $characters = "*","=",">"," "
+    foreach($character in $characters)
+    {
+        $name = $name.Replace($character,"")
+    }
+    return $name
 }
-
 
 $counterSetNames = (Get-Counter -ListSet *).CounterSetName
 
