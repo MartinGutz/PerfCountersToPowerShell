@@ -20,8 +20,7 @@ foreach($counterSetName in $counterSetNames)
     foreach($counter in $counters)
     {
         $counterName = $counter.Substring(1)
-        $counterName = $counterName.Replace("*","").Replace("/","-").Replace("\","").Replace("(","").Replace(")","")
-        $counterName = $counterName.Replace(">","").Replace("=","")
+        $counterName = SanitizeNames $counterName
         $counterFileName = ".\Counters\" + $counterSetName + "\" + $counterName + ".ps1"
         #Write-Host $counterName
         $contents = 'Get-Counter -Counter ' + '"' + $counter + '"' + ' -Continuous'
