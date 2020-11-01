@@ -1,5 +1,6 @@
+[CmdletBinding()]
 param(
-    [string]$IncludeContinuous = $False 
+    [string]$IncludeContinuous = $False
 )
 
 function SanitizeNames($fileName)
@@ -13,13 +14,14 @@ function SanitizeNames($fileName)
     return $name
 }
 
+Write-Verbose "[$(Get-Date)] Starting Script"
 $counterSetNames = (Get-Counter -ListSet *).CounterSetName
 foreach($counterSetName in $counterSetNames)
 {
     $counters = (Get-Counter -ListSet $counterSetName).Counter
     $counterSetName = SanitizeNames $counterSetName
 
-    New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force
+    New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force 
     foreach($counter in $counters)
     {
         $counterName = $counter.Substring(1)
