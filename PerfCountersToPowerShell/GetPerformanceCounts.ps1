@@ -1,7 +1,7 @@
 function SanitizeNames($fileName)
 {
     $name = $fileName.ToString()
-    $characters = "*","=",">"," "
+    $characters = "*","=",">"," ","<","/","\",",","(",")"
     foreach($character in $characters)
     {
         $name = $name.Replace($character,"")
