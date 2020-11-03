@@ -14,7 +14,15 @@ function SanitizeNames($fileName)
     return $name
 }
 
+function WriteLog($message, $file)
+{
+    $message = "[$(Get-Date)] " + $message
+    Add-Content -Path $file $message
+}
+
+$logLocation = ".\logOut.txt"
 Write-Verbose "[$(Get-Date)] Starting Script"
+WriteLog "Starting Script" $logLocation
 $counterSetNames = (Get-Counter -ListSet *).CounterSetName
 foreach($counterSetName in $counterSetNames)
 {
