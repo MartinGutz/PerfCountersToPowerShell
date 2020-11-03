@@ -23,29 +23,38 @@ function WriteLog($message, $file)
 $logLocation = ".\logOut.txt"
 Write-Verbose "[$(Get-Date)] Starting Script"
 WriteLog "Starting Script" $logLocation
+
+Write-Verbose "[$(Get-Date)] Getting Counters"
+WriteLog "Getting Counters" $logLocation
 $counterSetNames = (Get-Counter -ListSet *).CounterSetName
+
 foreach($counterSetName in $counterSetNames)
 {
     $counters = (Get-Counter -ListSet $counterSetName).Counter
+    Write-Verbose "[$(Get-Date)] CounterSetName: $counters"
+    WriteLog "CounterSetName: $counters" $logLocation
     $counterSetName = SanitizeNames $counterSetName
 
-    New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force 
+    Write-Verbose "[$(Get-Date)] Creating Directory: $counterSetName"
+    WriteLog "Creating Directory: $counterSetName" $logLocation
+    New-Item -Path .\Counters -Name $counterSetName -ItemType "directory" -Force | Out-Null
     foreach($counter in $counters)
     {
         $counterName = $counter.Substring(1)
         $counterName = SanitizeNames $counterName
+        Write-Verbose "[$(Get-Date)] Counter: $counter"
+        WriteLog "Counter: $counter" $logLocation        
+        
         $counterFileName = ".\Counters\" + $counterSetName + "\" + $counterName + ".ps1"
-        #Write-Host $counterName
-        #Write-Host "VERBOSE: IncludeContinuous: " $IncludeContinuous 
         if($IncludeContinuous -eq $True)
         {
             $contents = 'Get-Counter -Counter ' + '"' + $counter + '"' + ' -Continuous'
         }else {
             $contents = 'Get-Counter -Counter ' + '"' + $counter + '"'
         }
-        
-        #Write-Host $contents
-        # powershell.exe -command "& {get-eventlog -logname security}"
+
+        Write-Verbose "[$(Get-Date)] Creating File: $counterFileName"
+        WriteLog "Creating File: $counterFileName" $logLocation        
         Set-Content -Path $counterFileName $contents
     }
 }
